@@ -227,4 +227,7 @@ app.post("/sessions/:session_id/messages", (req, res) => {
 });
 
 // Start the server
-app.listen(8003, () => console.log("Server on :8003"));
+const PORT = process.env.PORT || 8003;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
