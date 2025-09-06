@@ -171,10 +171,11 @@
 // client.js
 
 // Ensure API_BASE points to the right backend
+// client.js
+
+// Use Render URL instead of localhost
 export const API_BASE =
-  import.meta.env.VITE_API_BASE && import.meta.env.VITE_API_BASE.trim() !== ""
-    ? import.meta.env.VITE_API_BASE
-    : "http://localhost:8003/api"; // only used in local dev
+  import.meta.env.VITE_API_BASE || "https://ai-chatbot-1-6xtp.onrender.com/api";
 
 // Fetch available models
 export async function getModels() {
