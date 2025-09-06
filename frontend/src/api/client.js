@@ -175,13 +175,25 @@
 
 // Use Render URL instead of localhost
 // Detect API base dynamically
-const defaultApiBase = "https://ai-chatbot-1-6xtp.onrender.com/api";
+// client.js
 
-// Use env var if available, otherwise use default
-export const API_BASE =
-  import.meta.env.VITE_API_BASE?.trim() || defaultApiBase;
+// Decide API base dynamically
+let API_BASE;
 
-console.log("API_BASE in use:", API_BASE); // Debug log
+if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+  // 👉 On production (Vercel) → use your Render backend
+  API_BASE = "https://ai-chatbot-1-6xtp.onrender.com/api";
+} else {
+  // 👉 On local dev → use your local backend
+  API_BASE = "http://localhost:8003/api";
+}
+
+console.log("🌍 Using API_BASE:", API_BASE);
+
+// Export for use in other files
+export { API_BASE };
+
+// ================== API FUNCTIONS ==================
 
 // Fetch available models
 export async function getModels() {
