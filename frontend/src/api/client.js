@@ -174,8 +174,14 @@
 // client.js
 
 // Use Render URL instead of localhost
+// Detect API base dynamically
+const defaultApiBase = "https://ai-chatbot-1-6xtp.onrender.com/api";
+
+// Use env var if available, otherwise use default
 export const API_BASE =
-  import.meta.env.VITE_API_BASE || "https://ai-chatbot-1-6xtp.onrender.com/api";
+  import.meta.env.VITE_API_BASE?.trim() || defaultApiBase;
+
+console.log("API_BASE in use:", API_BASE); // Debug log
 
 // Fetch available models
 export async function getModels() {
