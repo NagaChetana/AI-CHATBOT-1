@@ -811,11 +811,181 @@
 // }
 
 
+// import { useState, useEffect, useRef } from "react";
+// import useSSE from "../hooks/useSSE";
+// import { marked } from "marked";
+
+// const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8003";
+
+// export default function ChatPanel({
+//   sessionId,
+//   provider,
+//   model,
+//   history,
+//   onUserSend,
+//   onAssistantDelta,
+//   onAssistantDone,
+// }) {
+//   const [input, setInput] = useState("");
+//   const [streaming, setStreaming] = useState(false);
+//   const [body, setBody] = useState(null);
+//   const [error, setError] = useState("");
+//   const messagesEndRef = useRef(null);
+//   const textareaRef = useRef(null);
+//   const messagesContainerRef = useRef(null);
+
+//   useEffect(() => {
+//     setError("");
+//   }, [sessionId]);
+
+//   useEffect(() => {
+//     scrollToBottom();
+//   }, [history, streaming]);
+
+//   useEffect(() => {
+//     if (textareaRef.current) {
+//       textareaRef.current.style.height = "auto";
+//       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+//     }
+//   }, [input]);
+
+//   const scrollToBottom = () => {
+//     if (messagesContainerRef.current && messagesEndRef.current) {
+//       messagesContainerRef.current.scrollTo({
+//         top: messagesContainerRef.current.scrollHeight,
+//         behavior: "smooth"
+//       });
+//     }
+//   };
+
+//   useSSE({
+//     url: streaming ? `${API_BASE}/chat/${sessionId}/stream` : null,
+//     body,
+//     onDelta: (deltaOrError) => {
+//       if (typeof deltaOrError === "string") {
+//         onAssistantDelta(deltaOrError);
+//       } else if (deltaOrError && deltaOrError.error) {
+//         setError(deltaOrError.error);
+//       }
+//     },
+//     onDone: () => {
+//       setStreaming(false);
+//       onAssistantDone();
+//     },
+//     onError: (err) => {
+//       setStreaming(false);
+//       setError(err?.message || "Unknown error");
+//     },
+//   });
+
+//   const onSend = () => {
+//     if (!input.trim() || !sessionId) return;
+//     const msg = { role: "user", content: input, provider, model };
+//     const msgs = [...history, msg];
+//     onUserSend(msg);
+//     setBody({ messages: msgs, provider, model });
+//     setStreaming(true);
+//     setInput("");
+//   };
+
+//   const handleKeyDown = (e) => {
+//     if (e.key === "Enter" && !e.shiftKey) {
+//       e.preventDefault();
+//       onSend();
+//     }
+//   };
+
+//   const copyToClipboard = (text) => {
+//     navigator.clipboard.writeText(text);
+//   };
+
+//   return (
+//     <div className="chat-container">
+//       <div className="chat-messages" ref={messagesContainerRef}>
+//         {history.map((m, idx) => (
+//           <div key={idx} className={`message ${m.role === "user" ? "user" : ""}`}>
+//             <div className={`message-avatar ${m.role === "user" ? "user-avatar" : "ai-avatar"}`}>
+//               {m.role === "user" ? (
+//                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+//                   <circle cx="12" cy="7" r="4"></circle>
+//                 </svg>
+//               ) : (
+//                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+//                 </svg>
+//               )}
+//             </div>
+//             <div
+//               className="message-content"
+//               dangerouslySetInnerHTML={{ __html: marked.parse(m.content || "") }}
+//             />
+//             {m.role === "assistant" && (
+//               <div className="message-actions">
+//                 <button
+//                   className="message-action-btn"
+//                   onClick={() => copyToClipboard(m.content || "")}
+//                   aria-label="Copy text"
+//                 >
+//                   📋
+//                 </button>
+//               </div>
+//             )}
+//           </div>
+//         ))}
+
+//         {error && (
+//           <div className="error-message">
+//             ❌ <span>{error}</span>
+//             <button onClick={() => copyToClipboard(error)}>📋</button>
+//           </div>
+//         )}
+
+//         {streaming && (
+//           <div className="typing-indicator">
+//             <div className="typing-dot"></div>
+//             <div className="typing-dot"></div>
+//             <div className="typing-dot"></div>
+//           </div>
+//         )}
+
+//         <div ref={messagesEndRef} />
+//       </div>
+
+//       <div className="chat-input-container">
+//         <div className="chat-input-wrapper">
+//           <textarea
+//             ref={textareaRef}
+//             value={input}
+//             onChange={(e) => setInput(e.target.value)}
+//             onKeyDown={handleKeyDown}
+//             placeholder="Ask anything..."
+//             className="chat-input"
+//             rows={1}
+//             disabled={streaming}
+//           />
+//           <button
+//             onClick={onSend}
+//             className="chat-send-btn"
+//             disabled={!input.trim() || streaming}
+//           >
+//             ➤
+//           </button>
+//           {streaming && (
+//             <button onClick={() => setStreaming(false)} className="chat-stop-btn">
+//               ⏹
+//             </button>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
 import { useState, useEffect, useRef } from "react";
 import useSSE from "../hooks/useSSE";
 import { marked } from "marked";
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8003";
+import { API_BASE } from "../api/client";
 
 export default function ChatPanel({
   sessionId,
@@ -834,14 +1004,8 @@ export default function ChatPanel({
   const textareaRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
-  useEffect(() => {
-    setError("");
-  }, [sessionId]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [history, streaming]);
-
+  useEffect(() => setError(""), [sessionId]);
+  useEffect(() => scrollToBottom(), [history, streaming]);
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -864,7 +1028,7 @@ export default function ChatPanel({
     onDelta: (deltaOrError) => {
       if (typeof deltaOrError === "string") {
         onAssistantDelta(deltaOrError);
-      } else if (deltaOrError && deltaOrError.error) {
+      } else if (deltaOrError?.error) {
         setError(deltaOrError.error);
       }
     },
@@ -895,9 +1059,7 @@ export default function ChatPanel({
     }
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-  };
+  const copyToClipboard = (text) => navigator.clipboard.writeText(text);
 
   return (
     <div className="chat-container">
@@ -905,16 +1067,7 @@ export default function ChatPanel({
         {history.map((m, idx) => (
           <div key={idx} className={`message ${m.role === "user" ? "user" : ""}`}>
             <div className={`message-avatar ${m.role === "user" ? "user-avatar" : "ai-avatar"}`}>
-              {m.role === "user" ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              )}
+              {m.role === "user" ? "👤" : "🤖"}
             </div>
             <div
               className="message-content"
@@ -925,7 +1078,6 @@ export default function ChatPanel({
                 <button
                   className="message-action-btn"
                   onClick={() => copyToClipboard(m.content || "")}
-                  aria-label="Copy text"
                 >
                   📋
                 </button>
