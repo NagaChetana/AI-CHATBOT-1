@@ -178,6 +178,9 @@
 // client.js
 
 // Decide API base dynamically
+// client.js
+
+// Decide API base dynamically
 let API_BASE;
 
 if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
