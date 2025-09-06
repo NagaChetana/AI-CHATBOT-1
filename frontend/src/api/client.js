@@ -181,19 +181,27 @@
 // client.js
 
 // Decide API base dynamically
-let API_BASE;
+// 
 
-if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-  // 👉 On production (Vercel) → use your Render backend
-  API_BASE = "https://ai-chatbot-1-6xtp.onrender.com/api";
-} else {
-  // 👉 On local dev → use your local backend
-  API_BASE = "http://localhost:8003/api";
+// ================== API BASE URL ==================
+
+// Prefer environment variable first
+let API_BASE = import.meta.env.VITE_API_BASE;
+
+// Fallback logic
+if (!API_BASE) {
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    // 👉 Production (e.g. Vercel → Render backend)
+    API_BASE = "https://ai-chatbot-1-6xtp.onrender.com/api";
+  } else {
+    // 👉 Local development
+    API_BASE = "http://localhost:8003/api";
+  }
 }
 
 console.log("🌍 Using API_BASE:", API_BASE);
 
-// Export for use in other files
+// Export for reuse
 export { API_BASE };
 
 // ================== API FUNCTIONS ==================
